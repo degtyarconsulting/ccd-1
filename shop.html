@@ -978,9 +978,9 @@
                           </div>
                         ))}
                   </div>
-                  <p className="inter-semibold">
+                  <p style={{fontSize:14}} className="inter-semibold">
                     ${(item?.postTaxPriceInPennies / 100.0).toFixed(2)} /{" "}
-                    {item?.productWeight ? "" : item?.productWeigh}{" "}
+                    {item?.productWeight} {" "}
                     {item?.productUnitOfMeasure}
                   </p>
                 </div>
