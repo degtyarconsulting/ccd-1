@@ -62,7 +62,6 @@
       border: 1px solid #e5e7eb; /* border-gray-200 */
       justify-content: space-between;
       height: 330px;
-      cursor: pointer;
       align-items: center;
       position: relative;
       transition: background-color 0.05s, border-color 0.05s; /* Smooth hover effect */
@@ -260,8 +259,7 @@
           }
 
           return (
-            <a
-              href={`/store`}
+            <div
               key={index}
               className="product-card"
             >
@@ -411,8 +409,7 @@
                 </div>
               </div>
 
-              <div className="button">Buy Now</div>
-            </a>
+            </div>
           );
         }
 

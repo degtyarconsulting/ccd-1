@@ -1169,9 +1169,11 @@
                   <button
                     key={page}
                     onClick={() => handlePageChange(page + 1)}
-                    className={`px-4 py-2 border rounded-md mx-1 hover:bg-gray-200 text-sm font-medium hidden md:flex md:visible${
-                      currentPage === page + 1 ? "bg-gray-200" : ""
-                    }`}
+                    className={`px-4 py-2 border rounded-md mx-1 hover:bg-gray-200 text-sm font-medium hidden md:flex md:visible`}
+                    style={{
+                      backgroundColor:
+                        currentPage === page + 1 ? "#e5e7eb" : "",
+                    }}
                   >
                     {page + 1}
                   </button>
