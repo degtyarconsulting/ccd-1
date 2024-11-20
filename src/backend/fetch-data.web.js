@@ -6,18 +6,26 @@ import { getSecret } from "wix-secrets-backend";
 
 const getSecretKey = webMethod(Permissions.Anyone, async () => {
   if (process.env.LOCAL_DEV) {
-    return 'flowhub-api-key';
-}
+    console.log("[DEV] dev environment 1");
+    return "flowhub-api-key";
+  }
   const key = await getSecret("flowhub-api-key");
-  return key
+  if (!key) {
+    console.log("[ERROR] no secret key");
+  }
+  return key;
 });
 
 const getClientId = webMethod(Permissions.Anyone, async () => {
   if (process.env.LOCAL_DEV) {
-    return 'flowhub-client-id';
-}
+    console.log("[DEV] dev environment 2");
+    return "flowhub-client-id";
+  }
   const id = await getSecret("flowhub-client-id");
-  return id
+  if (!id) {
+    console.log("[ERROR] no client id found");
+  }
+  return id;
 });
 
 export const fetchAllProductData = webMethod(Permissions.Anyone, async () => {
@@ -26,23 +34,24 @@ export const fetchAllProductData = webMethod(Permissions.Anyone, async () => {
   const url = "https://api.flowhub.co/v0/inventory";
 
   return fetch(url, {
-      method: "GET",
-      headers: {
-          "Accept": "application/json",
-          "clientId": id,
-          "key": key
-      }
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      clientId: id,
+      key: key,
+    },
   })
-  .then((response) => {
+    .then((response) => {
       if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+        console.log("[ERROR]",response.status);
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
       return response.json();
-  })
-  .catch((error) => {
+    })
+    .catch((error) => {
       console.error("Error fetching product data:", error);
       throw error;
-  });
+    });
 });
 
 /**
