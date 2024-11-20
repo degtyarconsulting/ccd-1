@@ -1,0 +1,1726 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cannabis Product Display</title>
+
+    <!-- Include Tailwind CSS from CDN -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- fonts-->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Great+Vibes&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Orbitron:wght@400..900&family=Roboto+Slab:wght@100..900&family=Shadows+Into+Light&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- React and ReactDOM CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+    <!-- Babel for JSX support (only for dev, not recommended for production) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+  <style>
+    .main-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      background-color: brown;
+      transition: all 0.05s, all 0.05s; /* Smooth hover effect */
+    }
+
+    .product-card {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border-radius: 10px;
+      width: 100%;
+      border: 1px solid #e5e7eb; /* border-gray-200 */
+      justify-content: space-between;
+      height: 330px;
+      cursor: pointer;
+      align-items: center;
+      position: relative;
+      transition: background-color 0.05s, border-color 0.05s; /* Smooth hover effect */
+
+      .container {
+        padding: 10px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+      }
+
+      .middle-div {
+        align-items: "center";
+        margin-top: 16;
+        flex-direction: "column";
+      }
+
+      .top-div {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+
+        .first-p {
+          color: #2e1679;
+          font-size: 13px;
+        }
+        .second-p {
+          background-color: #9767cb;
+          border-radius: 20px;
+          color: white;
+          padding-left: 8px;
+          padding-right: 8px;
+          font-size: 13px;
+        }
+      }
+
+      .button {
+        width: 100%;
+        background-color: #9767cb;
+        color: white;
+        height: 40px;
+        font-size: 15px;
+        font-family: "Inter", sans-serif; /* Ensure you include the Inter font in your project */
+        font-weight: 600; /* 'inter-semibold' equivalent */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        transition: background-color 0.05s, border-color 0.05s; /* Smooth hover effect */
+      }
+
+      .button:hover {
+        background-color: #8d58c6;
+      }
+    }
+
+    .product-card:hover {
+      border-color: #9767cb; /* hover:border-[#9767CB] */
+    }
+
+    .default-flex-width {
+      display: flex;
+      width: 100%;
+    }
+
+    .category-button {
+      height: 80px;
+      width: 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem; /* Equivalent to Tailwind's gap-2 */
+      padding: 0.5rem; /* Equivalent to Tailwind's p-2 */
+      border: 1px solid #e5e7eb; /* border-gray-200 */
+      border-radius: 20px;
+      font-weight: bold;
+      color: #2e1679;
+      background-color: transparent;
+      transition: background-color 0.05s, border-color 0.05s; /* Smooth hover effect */
+    }
+
+    .category-checkbox {
+      accent-color: #8d58c6;
+      pointer-events: none;
+    }
+
+    .category-button:hover {
+      background-color: #2e1679; /* hover:bg-purple-300 */
+      border-color: #2e1679; /* hover:border-purple-300 */
+      transition: background-color 0.05s;
+    }
+    .category-button:hover svg {
+      fill: white;
+    }
+    .category-button:hover p {
+      color: white;
+    }
+
+    /* Disable hover styles for screens smaller than tablet size */
+    @media (max-width: 768px) {
+      /* Adjust 768px to your tablet breakpoint */
+      .category-button:hover {
+        background-color: inherit; /* Revert to original background color */
+        border-color: inherit; /* Revert to original border color */
+      }
+      .category-button:hover svg {
+        fill: inherit; /* Revert to original SVG fill */
+      }
+      .category-button:hover p {
+        color: inherit; /* Revert to original text color */
+      }
+    }
+
+    .category-holder {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      height: 30px;
+    }
+
+    .category-holder .category-dropdown {
+      width: 300px;
+      border: 1px solid #2e1679; /* Border color */
+      padding: 0.25rem 0.5rem; /* Padding: px-2 py-1 */
+      border-radius: 10px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      height: 30px;
+      background: white;
+    }
+
+    .category-holder .category-dropdown p {
+      font-size: 15px;
+      font-family: "Inter", sans-serif;
+      font-weight: 600;
+      color: #2e1679;
+    }
+
+    .category-holder .category-dropdown svg {
+      width: 16px;
+      height: 16px;
+      color: #2e1679;
+    }
+
+    .category-holder .option-holder {
+      display: flex;
+      flex-direction: row;
+      gap: 4px;
+      cursor: pointer;
+      align-items: center;
+      p {
+        font-size: 16px;
+        font-weight: 500;
+        color: #2e1679;
+      }
+    }
+
+    .category-holder .reset-holder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      cursor: pointer;
+      margin-top: 5px;
+      p {
+        font-size: 14px;
+        font-weight: 500;
+        color: #2e1679;
+      }
+    }
+
+    .category-holder .reset-holder:hover {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      cursor: pointer;
+      background-color: #e5e7eb;
+      p {
+        font-size: 14px;
+        font-weight: 500;
+        color: #2e1679;
+      }
+    }
+
+    .category-holder .option-holder:hover {
+      display: flex;
+      flex-direction: row;
+      gap: 4px;
+      cursor: pointer;
+      transition: hover 0.05s;
+      z-index: 10;
+      p {
+        font-size: 16px;
+        font-weight: 500;
+        color: #421eae;
+      }
+    }
+
+    .category-holder .dropdown-menu {
+      border: 1px solid #2e1679;
+      border-top: none;
+      position: absolute;
+      left: 0;
+      top: 30px;
+      width: 300px;
+      border-radius: 10px;
+      border-top-left-radius: 0px;
+      border-top-right-radius: 0px;
+      display: none; /* Hidden by default */
+      flex-direction: column;
+      background: white;
+      z-index: 1;
+      padding-right: 5px;
+      padding-left: 5px;
+      padding-bottom: 5px;
+    }
+
+    .category-holder svg {
+      transform: rotate(90deg);
+      transition: transform 0.05s;
+    }
+
+    .category-holder:hover svg {
+      transform: rotate(0deg);
+    }
+
+    .category-holder:hover .dropdown-menu {
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1),
+        0 2px 4px -2px rgb(0 0 0 / 0.1);
+    }
+
+    .category-holder:hover .category-dropdown {
+      border-bottom-left-radius: 0px;
+      border-bottom-right-radius: 0px;
+    }
+
+    .category-holder:hover .dropdown-menu {
+      display: flex; /* Show the menu on hover */
+    }
+
+    .indv-prod-holder {
+      height: 900px;
+      flex-direction: column;
+      display: flex;
+      overflow-y: scroll;
+    }
+
+    @media (min-height: 650px) {
+      .indv-prod-holder {
+        height: 1000px;
+      }
+    }
+
+    @media (min-height: 900px) {
+      .indv-prod-holder {
+        height: 900px;
+      }
+    }
+
+    @media (min-width: 798px) {
+      .indv-prod-holder {
+        flex-direction: row;
+        width: 100%;
+
+        height: auto;
+      }
+    }
+
+    .responsive-image {
+      width: 800px;
+      height: 800px;
+      max-width: 800px;
+      object-fit: cover;
+    }
+
+    @media (max-width: 800px) {
+      .responsive-image {
+        max-height: 400px;
+        width: 100%;
+      }
+    }
+
+    @media (min-width: 800px) and (max-width: 1100px) {
+      .responsive-image {
+        max-height: 500px;
+        width: 100%;
+      }
+    }
+
+    /* Fonts */
+    .mw-light {
+      font-family: "Merriweather", serif;
+      font-weight: 300;
+      font-style: normal;
+    }
+
+    .mw-regular {
+      font-family: "Merriweather", serif;
+      font-weight: 400;
+      font-style: normal;
+    }
+
+    .mw-bold {
+      font-family: "Merriweather", serif;
+      font-weight: 700;
+      font-style: normal;
+    }
+
+    .mw-black {
+      font-family: "Merriweather", serif;
+      font-weight: 900;
+      font-style: normal;
+    }
+
+    .mw-light-italic {
+      font-family: "Merriweather", serif;
+      font-weight: 300;
+      font-style: italic;
+    }
+
+    .mw-regular-italic {
+      font-family: "Merriweather", serif;
+      font-weight: 400;
+      font-style: italic;
+    }
+
+    .mw-bold-italic {
+      font-family: "Merriweather", serif;
+      font-weight: 700;
+      font-style: italic;
+    }
+
+    .mw-black-italic {
+      font-family: "Merriweather", serif;
+      font-weight: 900;
+      font-style: italic;
+    }
+
+    .inter-light {
+      font-family: "Inter", sans-serif;
+      font-optical-sizing: auto;
+      font-weight: 300;
+      font-style: normal;
+    }
+
+    .inter-regular {
+      font-family: "Inter", sans-serif;
+      font-optical-sizing: auto;
+      font-weight: 400;
+      font-style: normal;
+    }
+
+    .inter-semibold {
+      font-family: "Inter", sans-serif;
+      font-optical-sizing: auto;
+      font-weight: 600;
+      font-style: normal;
+    }
+
+    .inter-bold {
+      font-family: "Inter", sans-serif;
+      font-optical-sizing: auto;
+      font-weight: 700;
+      font-style: normal;
+    }
+  </style>
+
+  <body class="">
+    <!--
+    <div
+      style="background-color: #475841; height: 300px"
+      class="relative flex flex-col justify-center px-[22vw] items-center h-[300px] bg-[#475841] w-full"
+    >
+      <div class="h-[100px]"></div>
+      <div class="w-full text-center flex flex-col items-center">
+        <h1 class="mw-regular text-white text-5xl mb-2">Cannabis Store</h1>
+        <div class="w-[200px] h-[1px] bg-white"></div>
+        <h2 class="mt-4 text-white inter-regular text-2xl">
+          Shop our selection of quality products
+        </h2>
+      </div>
+    </div>
+    -->
+    <div id="root" class=""></div>
+
+    <script type="text/babel">
+      const { useState, useEffect, useRef } = React;
+      const { ReactDOM } = window;
+
+      function App() {
+        // State to hold filter values
+        const [weed_items, set_weed_items] = useState(null);
+        const [priceRange, setPriceRange] = useState([0, 100]); // Adjust to max price range
+        const [thcRange, setThcRange] = useState([0, 30]); // Adjust to max THC range
+        const [selectedBrands, setSelectedBrands] = useState([]);
+        const [selectedEffects, setSelectedEffects] = useState([]);
+
+        // only use 1 cat at a time?
+        const [selectedCategories, setSelectedCategories] = useState(null);
+
+        const [brands, setBrands] = useState([]); // New state for brands
+        const [filteredItems, setFilteredItems] = useState([]); // New state for filtered items
+        const [price_under, setPriceUnder] = useState(null);
+        const [selectedSortSetting, setSelectedSortSetting] = useState(null);
+
+        const [terpenes, setTerpenes] = useState([]);
+        const [selectedTerpenes, setSelectedTerpenes] = useState([]);
+
+        const effects = ["Relaxed", "Focused", "Creative"];
+        const all_prices = [
+          {
+            label: "Under $10",
+            value: 10,
+          },
+          {
+            label: "Under $20",
+            value: 20,
+          },
+          {
+            label: "Under $40",
+            value: 40,
+          },
+          {
+            label: "Under $60",
+            value: 60,
+          },
+          {
+            label: "Under $80",
+            value: 80,
+          },
+          {
+            label: "Under $100",
+            value: 100,
+          },
+          {
+            label: "Under $150",
+            value: 150,
+          },
+          {
+            label: "Under $200",
+            value: 200,
+          },
+          {
+            label: "Under $250",
+            value: 250,
+          },
+          {
+            label: "Under $300",
+            value: 300,
+          },
+        ];
+        const all_sort_settings = [
+          {
+            label: "Name [A-Z]",
+            value: 0,
+          },
+          {
+            label: "Name [Z-A]",
+            value: 1,
+          },
+          {
+            label: "Price [Low-High]",
+            value: 2,
+          },
+          {
+            label: "Price [High-Low]",
+            value: 3,
+          },
+          {
+            label: "THC [Low-High]",
+            value: 4,
+          },
+          {
+            label: "THC [High-Low]",
+            value: 5,
+          },
+        ];
+        useEffect(() => {
+          // Utility function to recursively replace all "null" strings with actual null
+          const replaceNullStrings = (obj) => {
+            if (Array.isArray(obj)) {
+              return obj.map((item) => replaceNullStrings(item)); // Recursively process arrays
+            } else if (obj !== null && typeof obj === "object") {
+              const updatedObj = {};
+              for (const [key, value] of Object.entries(obj)) {
+                updatedObj[key] =
+                  value === "null" ? null : replaceNullStrings(value); // Replace "null" with actual null
+              }
+              return updatedObj;
+            }
+            return obj; // Return the value if it's neither an object nor an array
+          };
+
+          // Listen for messages from the parent window
+          const handleMessage = (event) => {
+            const products_local = event.data; // Ensure the correct data structure is being read
+
+            // Replace "null" strings with actual null in the data
+            const updatedProducts = replaceNullStrings(products_local);
+            set_weed_items(updatedProducts);
+
+            // Update brands whenever new items are received
+            if (updatedProducts?.data) {
+              setBrands([
+                ...new Set(
+                  updatedProducts.data
+                    .map((item) => item.brand) // Extract brands
+                    .filter((brand) => brand && brand !== null) // Exclude null values
+                ),
+              ]);
+            }
+
+            // Update terpenes whenever new items are received
+            if (updatedProducts?.data) {
+              const terpeneNames = [
+                ...new Set(
+                  updatedProducts.data.flatMap(
+                    (item) =>
+                      Array.isArray(item.terpenes) // Check if `terpenes` is an array
+                        ? item.terpenes.flatMap((terpeneObj) =>
+                            Object.keys(terpeneObj).filter(
+                              (key) => key !== "Total Terpenoids"
+                            )
+                          )
+                        : [] // Fallback for `null`, "null", or invalid `terpenes`
+                  )
+                ),
+              ];
+
+              setTerpenes(terpeneNames);
+            }
+          };
+
+          window.addEventListener("message", handleMessage);
+
+          return () => {
+            window.removeEventListener("message", handleMessage);
+          };
+        }, []);
+
+        function handleClick(e) {
+          // If using a React event, you can use nativeEvent
+          const container = e.currentTarget; // or document.getElementById("main-container")
+
+          const rect = container.getBoundingClientRect();
+
+          const x = e.nativeEvent.clientX - rect.left;
+          const y = e.nativeEvent.clientY - rect.top;
+
+          console.log("Mouse Position Relative to Container:", { x, y });
+
+          last_clicked.current = { x, y };
+        }
+
+        const did_init_listener = useRef(false);
+
+        useEffect(() => {
+          if (!did_init_listener.current) {
+            //document.addEventListener("click", handleClick);
+            did_init_listener.current = true;
+          }
+        }, []);
+
+        useEffect(() => {
+          if (weed_items?.data) {
+            try {
+              const updatedFilteredItems = weed_items.data
+                .filter((item) => {
+                  const itemPrice = item.postTaxPriceInPennies / 100;
+
+                  // Check if the item meets all active filters
+                  return (
+                    // Price filter
+                    (price_under ? itemPrice <= price_under : true) &&
+                    // Categories filter
+                    (selectedCategories?.length
+                      ? selectedCategories.includes(item.category)
+                      : true) &&
+                    // Brands filter
+                    (selectedBrands?.length
+                      ? selectedBrands.includes(item.brand)
+                      : true) &&
+                    // Terpenes filter
+                    (selectedTerpenes?.length > 0
+                      ? selectedTerpenes?.some((selectedTerpene) =>
+                          item?.terpenes?.some((terpeneObj) =>
+                            Object.keys(terpeneObj).includes(selectedTerpene)
+                          )
+                        )
+                      : true)
+                  );
+                })
+
+                .sort((a, b) => {
+                  try {
+                    // Sorting logic based on selectedSortSetting
+                    switch (selectedSortSetting) {
+                      case 0: // Name [A-Z]
+                        return a.productName.localeCompare(b.productName);
+                      case 1: // Name [Z-A]
+                        return b.productName.localeCompare(a.productName);
+                      case 2: // Price [Low-High]
+                        return (
+                          a.postTaxPriceInPennies - b.postTaxPriceInPennies
+                        );
+                      case 3: // Price [High-Low]
+                        return (
+                          b.postTaxPriceInPennies - a.postTaxPriceInPennies
+                        );
+                      case 4: // THC [Low-High] (Note: For THC, we assume it's in the `cannabinoidInformation` array)
+                        const thcA =
+                          a.cannabinoidInformation?.find(
+                            (info) => info.name === "thc"
+                          )?.upperRange || 0;
+                        const thcB =
+                          b.cannabinoidInformation?.find(
+                            (info) => info.name === "thc"
+                          )?.upperRange || 0;
+                        return thcA - thcB;
+                      case 5: // THC [High-Low]
+                        const thcHighA =
+                          a.cannabinoidInformation?.find(
+                            (info) => info.name === "thc"
+                          )?.upperRange || 0;
+                        const thcHighB =
+                          b.cannabinoidInformation?.find(
+                            (info) => info.name === "thc"
+                          )?.upperRange || 0;
+                        return thcHighB - thcHighA;
+                      default:
+                        return 0; // No sorting if no sort setting is selected
+                    }
+                  } catch {}
+                });
+
+              setFilteredItems(updatedFilteredItems);
+            } catch (e) {
+              console.warn(e);
+            }
+          }
+        }, [
+          weed_items,
+          price_under,
+          selectedCategories,
+          selectedBrands,
+          selectedSortSetting,
+          selectedTerpenes,
+        ]);
+
+        function capitalizeWordsWithAcronyms(str) {
+          const acronyms = new Set([
+            "thc",
+            "cbd",
+            "tac",
+            "(thc)",
+            "(cbd)",
+            "(tac)",
+          ]);
+
+          return str
+            .split(" ")
+            ?.map((word) => {
+              const lowerWord = word.toLowerCase();
+              if (acronyms.has(lowerWord)) {
+                return lowerWord.toUpperCase(); // Capitalize entire word if it's an acronym
+              } else {
+                // Capitalize only the first letter for regular words
+                return (
+                  word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+                );
+              }
+            })
+            .join(" ");
+        }
+
+        const cat_icons = {
+          Edibles: (
+            <svg
+              viewBox="0 0 38 38.01"
+              fill="#2E1679"
+              width="2rem"
+              height="2rem"
+            >
+              <path d="M38,11.38s0-.03,0-.05c0-.11-.03-.21-.07-.32-.02-.04-.06-.08-.08-.12-.04-.06-.07-.13-.12-.18,0,0-.02-.02-.03-.03,0,0,0,0,0,0,0,0,0,0,0,0-.84-.82-1.57-.99-2.16-1.13-.47-.11-.78-.18-1.23-.63-.45-.45-.52-.76-.63-1.23-.14-.6-.31-1.34-1.17-2.19-.85-.85-1.59-1.03-2.19-1.16-.47-.11-.78-.18-1.23-.63s-.52-.76-.63-1.23c-.13-.59-.31-1.32-1.13-2.16,0,0,0,0,0,0,0,0,0,0,0,0,0,0-.02-.02-.03-.03-.05-.05-.12-.08-.18-.12-.04-.03-.08-.06-.12-.08-.1-.04-.21-.06-.32-.07-.02,0-.03,0-.05,0-.27,0-.54.08-.74.29-.01.01-.02.03-.03.04-3.56,3.36-3.87,7.06-3.56,9.46-2.28-.85-4.95-.37-6.78,1.46l-4.25,4.25c-1.21,1.21-1.88,2.82-1.88,4.53,0,.78.15,1.54.41,2.25-2.4-.31-6.1,0-9.46,3.56-.01.01-.03.02-.04.03-.2.2-.3.48-.29.74,0,.02,0,.03.01.05,0,.11.03.21.07.31.02.05.06.08.08.13.04.06.07.13.12.18,0,0,.02.02.03.03,0,0,0,0,0,0,0,0,0,0,0,0,.84.82,1.57.99,2.15,1.13.47.11.78.18,1.23.63s.52.76.63,1.23c.14.6.31,1.34,1.16,2.19s1.6,1.03,2.19,1.16c.47.11.78.18,1.23.63s.52.76.63,1.23c.14.59.31,1.32,1.13,2.16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,.02.02.03.03.08.08.17.12.26.17.02,0,.04.03.06.04.13.05.26.09.39.09.26,0,.51-.1.71-.29.01-.01.02-.03.03-.04,3.56-3.36,3.87-7.05,3.56-9.46.71.27,1.47.41,2.25.41,1.71,0,3.32-.67,4.53-1.88l4.25-4.25c1.21-1.21,1.88-2.82,1.88-4.53,0-.78-.15-1.54-.41-2.25.44.06.9.1,1.41.1,2.31,0,5.29-.74,8.04-3.66.01-.01.03-.02.04-.03.2-.2.3-.48.29-.74ZM12.67,16.91l2.43-2.43v11.05c-.08-.07-.17-.13-.25-.2l-2.18-2.18c-.83-.83-1.29-1.94-1.29-3.12s.46-2.29,1.29-3.12ZM11.57,35.39c-.03-.1-.05-.21-.08-.33-.14-.6-.31-1.34-1.16-2.19s-1.6-1.03-2.19-1.16c-.47-.11-.78-.18-1.23-.63s-.52-.76-.63-1.23c-.14-.6-.31-1.34-1.16-2.19s-1.6-1.02-2.19-1.16c-.11-.03-.22-.05-.32-.08,3.92-3.42,7.98-2.04,8.78-1.72l1.91,1.91c.33.81,1.7,4.86-1.72,8.79ZM17.97,26.62c-.3,0-.59-.03-.87-.09v-14.02c.84-.75,1.88-1.14,2.94-1.14.45,0,.89.09,1.32.22v13.47l-.27.27c-.83.83-1.94,1.29-3.12,1.29ZM25.33,21.08l-1.98,1.98v-10.2l1.98,1.98c.83.83,1.29,1.94,1.29,3.12s-.46,2.29-1.29,3.12ZM26.61,13.3l-1.9-1.9c-.33-.81-1.7-4.86,1.72-8.79.03.1.05.21.08.32.14.6.31,1.34,1.16,2.19s1.6,1.03,2.19,1.16c.47.11.78.18,1.23.63.45.45.52.76.63,1.23.14.6.31,1.34,1.17,2.19s1.6,1.03,2.19,1.16c.12.03.22.05.33.08-3.93,3.42-7.98,2.04-8.79,1.72Z"></path>
+            </svg>
+          ),
+          Flower: (
+            <svg
+              viewBox="0 0 37.19 35.26"
+              fill="#2E1679"
+              width="2rem"
+              height="2rem"
+            >
+              <path d="M37.1,23.37c-.14-.41-.53-.68-.95-.68h-7.76l1.96-1.39c1.08-.72,1.89-1.81,2.41-3.27q3.55-11.16,2.79-11.63c-.35-.21-.79-.19-1.11.04l-10.65,7.55c-.05-.29-.12-.57-.21-.85L19.55.68s-.03-.04-.04-.07c-.03-.06-.06-.12-.1-.18-.04-.05-.07-.1-.11-.14-.05-.05-.1-.08-.15-.12-.05-.04-.11-.07-.17-.09-.03-.01-.05-.03-.07-.04-.04-.01-.07,0-.11-.01-.06-.01-.13-.02-.2-.02-.07,0-.13,0-.19.02-.04,0-.07,0-.11.01-.03,0-.05.03-.07.04-.06.02-.11.06-.17.09-.06.04-.11.07-.15.12-.04.04-.08.09-.11.14-.04.06-.07.12-.1.18-.01.02-.03.04-.04.07l-4.03,12.48c-.09.28-.16.56-.21.85L2.75,6.45c-.32-.23-.76-.26-1.11-.04q-.76.46,2.8,11.66c.51,1.42,1.31,2.51,2.38,3.22l1.98,1.41H1.04c-.43,0-.82.28-.95.68q-.28.82,5.99,5.63c1.1.83,2.41,1.29,3.82,1.33h3.05l-2.5,3.33c-.25.33-.27.78-.05,1.13.18.3.51.47.85.47.06,0,.13,0,.19-.02l3.93-.76c.56-.14,1.02-.45,1.27-.84l1.95-2.52,1.91,2.46c.3.45.75.76,1.37.91l3.88.74c.06.01.13.02.19.02.34,0,.66-.17.85-.47.22-.35.2-.8-.05-1.13l-2.5-3.33h3.08c1.38-.04,2.69-.5,3.8-1.33q6.26-4.8,5.98-5.62ZM23.75,16.48l9.51-6.74c-.69,2.23-1.69,5.4-2.4,7.66-.36,1.01-.91,1.76-1.65,2.26l-8.35,5.92,2.72-8.42c.07-.22.13-.45.18-.67ZM15.52,13.77l3.07-9.53,3.07,9.53c.21.63.27,1.29.18,1.94,0,.04-.01.07-.01.11-.04.24-.09.48-.17.72l-3.07,9.53-3.07-9.53c-.08-.24-.13-.47-.17-.71,0-.04,0-.07-.02-.11-.08-.65-.02-1.31.19-1.94ZM7.96,19.64c-.72-.48-1.27-1.23-1.61-2.21-.72-2.28-1.73-5.46-2.42-7.69l9.51,6.74c.05.23.11.45.18.67l2.72,8.42-8.38-5.94ZM7.29,27.41c-1.21-.93-2.48-1.91-3.5-2.72h7.83l5.13,3.64h-6.82c-.96-.03-1.88-.35-2.64-.92ZM15.03,32.48s-.03.04-.08.06l-1.34.26,1.85-2.46h1.23l-1.66,2.15ZM23.58,32.79l-1.28-.25c-.11-.03-.13-.06-.17-.12l-1.62-2.09h1.23l1.85,2.46ZM29.91,27.4c-.77.58-1.69.9-2.62.93h-6.85l5.13-3.64h7.83c-1.02.8-2.29,1.79-3.49,2.71Z"></path>
+            </svg>
+          ),
+          Concentrates: (
+            <svg
+              viewBox="0 0 37.97 37.75"
+              fill="#2E1679"
+              width="2rem"
+              height="2rem"
+            >
+              <path d="M37.61,8.45c-.88,1.61-3.24,2.46-7.01,2.54h-.02c-.54,0-.99-.43-1-.98-.01-.55.43-1.01.98-1.02,4.09-.08,5.07-1.08,5.3-1.5.28-.51,0-1.16-.28-1.62-1.51-2.47-7.25-3.91-15.35-3.86-6.81.05-12.25,1.13-14,1.91.55.21,1.62.49,3.64.77l.94.12c1.46.23,2.3,1.19,2.97,1.95.61.7.99,1.09,1.54,1.09h0c.64,0,.84-.24,1.29-.78.59-.7,1.4-1.66,3.33-1.7h.49c.52,0,1.01.41,1.03.96.01.55-.42,1.01-.97,1.03h-.49c-1.03.04-1.36.42-1.85,1-.53.63-1.25,1.49-2.82,1.49h0c-1.49,0-2.35-.98-3.05-1.77-.55-.63-1.03-1.17-1.75-1.29l-.93-.12c-4.28-.59-5.91-1.37-5.82-2.8C4.01.21,20.05,0,20.21,0c5.25-.04,14.46.54,17.07,4.82.79,1.29.9,2.57.33,3.62ZM16.57,31.86c-.51.21-.75.8-.54,1.31.16.38.53.61.92.61.13,0,.26-.02.39-.08,1.91-.8,2.83-2.7,2.47-5.09-.08-.55-.59-.91-1.14-.84-.55.08-.92.59-.84,1.14.16,1.04.06,2.39-1.27,2.94ZM32.83,15.15c-.28-.47-.56-.93-.79-1.39-.25-.49-.85-.69-1.34-.44-.49.25-.69.85-.44,1.34.26.5.56,1.01.86,1.52.63,1.06,1.23,2.07,1.33,2.98.11.95-.17,1.89-.76,2.57-.58.67-1.43,1.05-2.46,1.09-1.47.06-2.49-.36-3-1.23-.6-1.03-.47-2.71.31-4.01,1.64-2.71,2.06-4.87,1.26-6.43-.58-1.14-1.75-1.84-3.48-2.1-.02,0-.03-.01-.05-.02-.11-.02-.22-.02-.33-.03-.1-.01-.19-.03-.3-.04-.02,0-.03,0-.04,0-2.34-.17-4.06.49-5.12,1.97-3.06,4.28,1.21,13.2,1.71,14.2,1.38,2.78,1.42,5.95.1,8.06-1.04,1.68-2.84,2.56-5.2,2.56-1.67,0-3.28-.71-4.41-1.94-1.19-1.31-1.75-3.07-1.58-4.96.19-2.12,1.25-4.28,2.36-6.57.48-.99.98-2.01,1.41-3.03,1.14-2.76,1.26-4.95.37-6.68-1.35-2.61-4.57-3.54-8.33-4.4-1.42-.33-2.5-.92-3.12-1.71-.34-.44-.97-.51-1.4-.17-.44.34-.51.97-.17,1.4.9,1.16,2.37,2,4.25,2.43,3.26.75,6.04,1.52,7,3.37.61,1.18.47,2.82-.44,5-.4.96-.88,1.96-1.36,2.92-1.15,2.35-2.33,4.77-2.56,7.26-.22,2.46.52,4.76,2.1,6.49,1.5,1.65,3.65,2.59,5.89,2.59,3.05,0,5.5-1.25,6.9-3.51,1.67-2.69,1.67-6.62,0-10.01-2.15-4.33-3.48-9.9-1.87-12.15.68-.95,1.9-1.31,3.73-1.1.86.11,1.82.39,2.17,1.06.44.87,0,2.5-1.19,4.48-.98,1.62-1.46,4.13-.33,6.07.5.84,1.73,2.22,4.48,2.22.11,0,.21,0,.32,0,1.6-.06,2.95-.68,3.9-1.78.95-1.1,1.4-2.59,1.23-4.09-.15-1.34-.89-2.58-1.61-3.79Z"></path>
+            </svg>
+          ),
+          Tpoicals: (
+            <svg viewBox="0 0 38 38" fill="#2E1679" width="2rem" height="2rem">
+              <path d="M38,16.89c0-1.23-.69-3.02-3.87-4.63v-3.89c0-1.87-1.82-3.52-5.11-4.64-.52-.18-1.09.1-1.27.63-.18.52.1,1.09.63,1.27,2.28.77,3.76,1.85,3.76,2.75,0,1.7-5,4.08-13.13,4.08s-13.13-2.37-13.13-4.08c0-1.22,2.73-2.92,7.78-3.69.55-.08.92-.59.84-1.14s-.59-.92-1.14-.84c-5.94.9-9.48,3.02-9.48,5.67v3.89c-3.2,1.61-3.87,3.41-3.87,4.64v13.63s0,0,0,0,0,0,0,0c0,4.85,9.79,7.47,19,7.47s19-2.62,19-7.47c0,0,0,0,0,0s0,0,0,0v-13.63ZM19,14.44c5.06,0,10.34-1.02,13.13-2.94v2.58c0,1.71-5,4.1-13.13,4.1s-13.13-2.39-13.13-4.1v-2.58c2.79,1.93,8.07,2.94,13.13,2.94ZM19,36c-9.73,0-17-2.89-17-5.47,0,0,0,0,0,0s0,0,0,0v-10.16c.62.49,1.42.98,2.46,1.45.13.06.28.09.41.09.38,0,.74-.22.91-.59.23-.5,0-1.1-.5-1.32-2.09-.95-3.28-2.08-3.28-3.1,0-.76.7-1.6,1.92-2.37.56,3.67,8.02,5.66,15.08,5.66s14.51-1.98,15.08-5.66c1.23.77,1.92,1.6,1.92,2.37,0,2.58-7.27,5.47-17,5.47-1.84,0-3.66-.1-5.39-.3-.54-.07-1.04.33-1.11.88-.06.55.33,1.04.88,1.11,1.81.21,3.7.31,5.62.31,6.68,0,13.67-1.38,17-3.99v10.15s0,0,0,0,0,0,0,0c0,2.58-7.27,5.47-17,5.47ZM10.05,6.85c.26,0,6.35-.15,8.13-6.14.13-.45.56-.75,1.03-.71,2.45.18,7.23,2.03,7.77,7.75.05.55-.35,1.04-.9,1.09-.03,0-.06,0-.1,0-.51,0-.95-.39-.99-.91-.41-4.26-3.67-5.49-5.18-5.82-2.52,6.6-9.67,6.73-9.75,6.73h0c-.55,0-1-.44-1-.99,0-.55.44-1,.99-1.01Z"></path>
+            </svg>
+          ),
+          Vapes: (
+            <svg
+              viewBox="0 0 21.27 37.96"
+              fill="#2E1679"
+              width="2rem"
+              height="2rem"
+            >
+              <path d="M17.42,10.72v-3.8c0-1.01-.68-1.86-1.61-2.14V1c0-.55-.45-1-1-1h-3.27c-.55,0-1,.45-1,1v3.78c-.93.28-1.61,1.13-1.61,2.14v3.73h-4.36c-2.53,0-4.58,2.06-4.58,4.58v18.16c0,2.53,2.05,4.58,4.58,4.58h12.1c2.53,0,4.58-2.05,4.58-4.58V15.23c0-2.27-1.67-4.15-3.84-4.51ZM13.82,2v2.67h-1.27v-2.67h1.27ZM10.94,6.92c0-.13.11-.24.24-.24h4c.13,0,.24.11.24.24v3.73h-4.48v-3.73ZM2,33.38V15.23c0-1.42,1.16-2.58,2.58-2.58h2.08v4.15h-1.57c-.55,0-1,.45-1,1s.45,1,1,1h1.57v4.51h-1.57c-.55,0-1,.45-1,1s.45,1,1,1h1.57v4.51h-1.57c-.55,0-1,.45-1,1s.45,1,1,1h1.57v4.15h-2.09c-1.42,0-2.58-1.16-2.58-2.58ZM19.27,33.38c0,1.42-1.16,2.58-2.58,2.58h-8.02V12.64h8.02c1.42,0,2.58,1.16,2.58,2.58v18.16Z"></path>
+            </svg>
+          ),
+          Beverage: (
+            <svg
+              width="38"
+              height="38"
+              viewBox="0 0 38 38"
+              color="var(--flowhub-main-text-color, var(--mantine-color-purple-9))"
+              fill="#2E1679"
+            >
+              <path d="M22.72 26.44C22.91 26.54 23.12 26.59 23.32 26.59C23.59 26.59 23.85 26.51 24.08 26.34C24.48 26.05 24.68 25.56 24.6 25.07L23.93 21.19L26.75 18.44C27.11 18.09 27.23 17.58 27.08 17.11C26.93 16.64 26.53 16.3 26.03 16.23L22.13 15.66L20.39 12.13C20.17 11.68 19.72 11.41 19.23 11.41C18.73 11.41 18.29 11.69 18.07 12.13L16.33 15.66L12.43 16.23C11.94 16.3 11.54 16.64 11.38 17.11C11.23 17.58 11.35 18.09 11.71 18.44L14.53 21.19L13.86 25.07C13.78 25.56 13.97 26.05 14.37 26.34C14.77 26.63 15.29 26.67 15.74 26.44L19.22 24.61L22.71 26.44H22.72ZM16.08 24.01L16.57 21.17C16.64 20.75 16.5 20.31 16.2 20.02L14.14 18.01L17 17.59C17.42 17.53 17.78 17.26 17.97 16.88L19.25 14.3L20.53 16.88C20.72 17.26 21.08 17.52 21.51 17.59L24.36 18.01L22.3 20.02C21.99 20.32 21.85 20.75 21.93 21.17L22.42 24.01L19.86 22.67C19.67 22.57 19.47 22.53 19.26 22.53C19.05 22.53 18.85 22.58 18.65 22.68L16.1 24.02L16.08 24.01ZM18 7.58V1C18 0.45 18.45 0 19 0C19.55 0 20 0.45 20 1V7.58C20 8.13 19.55 8.58 19 8.58C18.45 8.58 18 8.13 18 7.58ZM20 30.48V37C20 37.55 19.55 38 19 38C18.45 38 18 37.55 18 37V30.48C18 29.93 18.45 29.48 19 29.48C19.55 29.48 20 29.93 20 30.48ZM26.37 11.63C25.98 11.24 25.98 10.61 26.37 10.22L31.03 5.56C31.42 5.17 32.05 5.17 32.44 5.56C32.83 5.95 32.83 6.58 32.44 6.97L27.78 11.63C27.58 11.83 27.33 11.92 27.07 11.92C26.81 11.92 26.56 11.82 26.36 11.63H26.37ZM11.63 26.37C12.02 26.76 12.02 27.39 11.63 27.78L6.98 32.43C6.78 32.63 6.53 32.72 6.27 32.72C6.01 32.72 5.76 32.62 5.56 32.43C5.17 32.04 5.17 31.41 5.56 31.02L10.21 26.37C10.6 25.98 11.23 25.98 11.62 26.37H11.63ZM7.37 20H1C0.45 20 0 19.55 0 19C0 18.45 0.45 18 1 18H7.37C7.92 18 8.37 18.45 8.37 19C8.37 19.55 7.92 20 7.37 20ZM32.44 31.02C32.83 31.41 32.83 32.04 32.44 32.43C32.24 32.63 31.99 32.72 31.73 32.72C31.47 32.72 31.22 32.62 31.02 32.43L26.37 27.78C25.98 27.39 25.98 26.76 26.37 26.37C26.76 25.98 27.39 25.98 27.78 26.37L32.43 31.02H32.44ZM5.57 6.98C5.18 6.59 5.18 5.96 5.57 5.57C5.96 5.18 6.59 5.18 6.98 5.57L11.64 10.23C12.03 10.62 12.03 11.25 11.64 11.64C11.44 11.84 11.19 11.93 10.93 11.93C10.67 11.93 10.42 11.83 10.22 11.64L5.56 6.98H5.57ZM38 19C38 19.55 37.55 20 37 20H30.42C29.87 20 29.42 19.55 29.42 19C29.42 18.45 29.87 18 30.42 18H37C37.55 18 38 18.45 38 19ZM25.5 31.94C25.71 32.45 25.47 33.03 24.96 33.25C24.83 33.3 24.7 33.33 24.57 33.33C24.18 33.33 23.81 33.1 23.65 32.72L22.45 29.84C22.24 29.33 22.48 28.75 22.99 28.53C23.5 28.32 24.08 28.56 24.3 29.07L25.5 31.95V31.94ZM12.57 6.24C12.36 5.73 12.6 5.14 13.11 4.93C13.62 4.72 14.2 4.96 14.42 5.47L15.48 8C15.69 8.51 15.45 9.1 14.94 9.31C14.81 9.36 14.68 9.39 14.55 9.39C14.16 9.39 13.79 9.16 13.63 8.78L12.57 6.25V6.24ZM15.54 29.86L14.42 32.54C14.26 32.92 13.89 33.15 13.5 33.15C13.37 33.15 13.24 33.13 13.11 33.07C12.6 32.86 12.36 32.27 12.57 31.76L13.69 29.08C13.9 28.57 14.49 28.33 15 28.54C15.51 28.75 15.75 29.34 15.54 29.85V29.86ZM22.51 8.02L23.65 5.29C23.86 4.78 24.45 4.54 24.96 4.75C25.47 4.96 25.71 5.55 25.5 6.06L24.36 8.79C24.2 9.17 23.83 9.4 23.44 9.4C23.31 9.4 23.18 9.38 23.05 9.32C22.54 9.11 22.3 8.52 22.51 8.01V8.02ZM5.98 25.49C5.59 25.49 5.22 25.26 5.06 24.88C4.85 24.37 5.08 23.78 5.59 23.57L8.09 22.52C8.6 22.31 9.18 22.54 9.4 23.05C9.62 23.56 9.38 24.15 8.87 24.36L6.37 25.41C6.24 25.46 6.11 25.49 5.98 25.49ZM33.34 12.95C33.55 13.46 33.32 14.04 32.81 14.26L29.91 15.48C29.78 15.53 29.65 15.56 29.52 15.56C29.13 15.56 28.76 15.33 28.6 14.95C28.39 14.44 28.62 13.86 29.13 13.64L32.03 12.42C32.54 12.21 33.12 12.44 33.34 12.95ZM5.03 13.19C5.24 12.68 5.83 12.44 6.34 12.65L8.78 13.66C9.29 13.87 9.53 14.46 9.32 14.97C9.16 15.35 8.79 15.59 8.4 15.59C8.27 15.59 8.14 15.57 8.02 15.51L5.58 14.5C5.07 14.29 4.83 13.7 5.04 13.19H5.03ZM33.38 24.98C33.22 25.36 32.85 25.6 32.46 25.6C32.33 25.6 32.2 25.58 32.08 25.52L29.09 24.28C28.58 24.07 28.34 23.48 28.55 22.97C28.76 22.46 29.35 22.22 29.86 22.43L32.85 23.67C33.36 23.88 33.6 24.47 33.39 24.98H33.38Z"></path>
+            </svg>
+          ),
+          Accessories: (
+            <svg
+              fill="#2E1679"
+              viewBox="0 0 37.74 38"
+              width="2rem"
+              height="2rem"
+            >
+              <path d="M37.65,19.39c-5.44-14.93-6.45-15.62-6.78-15.85-.81-.55-4.41-2.18-7.29-3.46,0,0,0,0-.01,0-.11-.05-.22-.07-.34-.07-.01,0-.03,0-.04,0-.06,0-.11.02-.17.03-.07.01-.14.01-.21.04,0,0,0,0,0,0-3.4,1.38-7.85-.01-7.89-.03-.06-.02-.12-.02-.18-.02-.05,0-.1-.02-.16-.02-.11,0-.22.03-.32.07-.02,0-.03,0-.05.01,0,0,0,0,0,0,0,0,0,0,0,0-5.72,2.53-6.91,3.18-7.3,3.45-.36.25-1.33.91-6.79,15.85-.22.6-.03,1.27.48,1.66.89.68,3.76,2.64,7.29,2.64.31,0,.63-.02.95-.05.46,5.58,1.12,12.99,1.16,13.45.05.51.48.91,1,.91h15.81c.52,0,.95-.4,1-.91.04-.48.69-8,1.14-13.54.35.04.7.06,1.04.06,3.5,0,6.32-1.89,7.2-2.55.52-.39.72-1.06.5-1.67ZM22.52,2.27c.17.79.24,1.84-.25,2.58-.53.79-1.67,1.2-3.39,1.2s-2.86-.4-3.39-1.2c-.5-.76-.42-1.85-.23-2.64,1.5.35,4.47.83,7.26.06ZM29.07,21.53c.16-2,.27-3.49.28-3.82.01-.55-.43-1.01-.98-1.02h-.02c-.54,0-.99.43-1,.98-.02.94-1.02,12.79-1.5,18.33h-13.98c-.32-3.57-1.46-16.45-1.5-18.33-.01-.55-.43-.95-1.02-.98-.55.01-.99.47-.98,1.02.01.56.11,2.03.26,3.92-2.91.31-5.46-1.17-6.54-1.93,2.85-7.79,5.27-13.7,5.95-14.54.33-.21,1.46-.79,5.1-2.42-.1,1-.01,2.19.67,3.22.92,1.39,2.62,2.1,5.06,2.1s4.14-.71,5.06-2.1c.68-1.03.77-2.22.67-3.21,3.09,1.39,4.64,2.15,5.07,2.42.68.84,3.15,6.87,5.95,14.53-1.09.75-3.64,2.19-6.55,1.84Z"></path>
+            </svg>
+          ),
+          "Pre-Roll": (
+            <svg
+              viewBox="0 0 37.84 36.92"
+              fill="#2E1679"
+              width="2rem"
+              height="2rem"
+            >
+              <path d="M37.78,2.3c-.31-1.16-1.13-1.98-2.23-2.25-.54-.13-1.1-.02-1.54.32-1.34,1.02-8.07,6.31-16.47,13.58l-5.08,4.46c-4.22,3.76-8.18,7.45-11.77,10.95-.01.01-.02.03-.03.05-1.16,1.15-.75,3.44,1,5.41.77.86,1.68,1.52,2.57,1.86.44.17.86.25,1.26.25.59,0,1.11-.18,1.51-.54,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,.01,0,1.73-1.64,3.45-3.3,5.16-4.98,0,0,0,0,0,0,0,0,.01-.01.02-.02,1.63-1.6,3.25-3.22,4.84-4.84l4.38-4.53c8.04-8.46,13.3-14.81,15.28-17.21.31-.37.54-.66.71-.85.39-.46.53-1.07.37-1.64ZM29.3,10.4c-1.39,1.59-2.98,3.37-4.78,5.33.14-1.45-.11-2.94-1.06-4.21,1.33-1.12,2.59-2.17,3.75-3.13.62.08,1.81.45,2.09,2ZM3.15,33.49c-1.17-1.31-1.28-2.51-1.1-2.67.03-.03.26-.1.74.09.59.22,1.24.7,1.78,1.32.55.62.95,1.32,1.1,1.92.11.45.05.69,0,.74,0,0,0,0,0,0-.03.03-.26.09-.74-.09-.59-.22-1.24-.7-1.78-1.32ZM15.62,25.13c-.16.17-.33.33-.49.49.21-.91.34-1.86.3-2.8-.02-.55-.46-.99-1.04-.96-.55.02-.98.48-.96,1.04.11,2.98-1.68,6.09-2.62,7.04-1.11,1.09-2.23,2.16-3.35,3.24-.28-.77-.75-1.57-1.38-2.28-.69-.77-1.49-1.37-2.29-1.73,3.12-2.99,6.47-6.09,10.01-9.26l5.06-4.45c1.06-.91,2.09-1.8,3.08-2.64,1.64,2.37-.38,6.19-1.26,7.06,0,0,0,0,0,0-.23.24-.46.48-.69.73l-4.37,4.52ZM35.16,3.51c-.85,1.03-2.32,2.8-4.35,5.16-.45-.84-1.1-1.4-1.79-1.76,3.13-2.55,5.35-4.3,6.13-4.89.33.1.55.33.67.7-.16.19-.38.46-.66.79ZM1.62,21.45c.44-.6.76-1.04.76-2.02s-.32-1.41-.76-2.02c-.51-.7-1.15-1.57-1.15-3.2s.64-2.5,1.15-3.2c.44-.6.76-1.04.76-2.02,0-.55.45-1,1-1s1,.45,1,1c0,1.63-.64,2.5-1.15,3.2-.44.6-.76,1.04-.76,2.02s.32,1.41.76,2.02c.51.7,1.15,1.57,1.15,3.2s-.64,2.5-1.15,3.2c-.44.6-.76,1.04-.76,2.02,0,.55-.45,1-1,1s-1-.45-1-1c0-1.63.64-2.5,1.15-3.2Z"></path>
+            </svg>
+          ),
+          Tinctures: (
+            <svg
+              viewBox="0 0 37.56 38.01"
+              fill="#2E1679"
+              width="2rem"
+              height="2rem"
+            >
+              <path d="M2.38,24.79c-.24.27-2.38,2.72-2.38,4.95,0,1.72,1.4,3.13,3.13,3.13s3.13-1.4,3.13-3.13c0-2.22-2.14-4.68-2.38-4.95-.38-.42-1.11-.42-1.49,0ZM3.13,30.87c-.62,0-1.13-.51-1.13-1.13,0-.76.55-1.81,1.13-2.65.54.79,1.13,1.84,1.13,2.65,0,.62-.51,1.13-1.13,1.13ZM22.19,9.51c0-.27-.11-.52-.29-.71l-.67-.67s-.03-.08,0-.11l2.22-2.22c1.33-1.33,1.33-3.48,0-4.81s-3.48-1.33-4.81,0l-2.22,2.22s-.08.03-.11,0l-.67-.67c-.39-.39-1.02-.39-1.41,0l-3.92,3.92c-.39.39-.39,1.02,0,1.41l.76.76-7.24,7.24c-.71.71-1.18,1.62-1.33,2.56l-.43,2.79c-.05.31.06.63.28.86.19.19.44.29.71.29.05,0,.1,0,.15-.01l2.79-.43c.94-.15,1.85-.62,2.56-1.33l7.24-7.24.77.77c.2.2.45.29.71.29s.51-.1.71-.29l3.92-3.92c.19-.19.29-.44.29-.71ZM17.83,4.62l2.22-2.22c.55-.55,1.44-.55,1.98,0s.55,1.44,0,1.98l-2.22,2.22s-.03.04-.05.06l-1.99-1.99s.04-.03.06-.05ZM7.13,19.2c-.41.41-.93.68-1.45.77l-1.44.22.22-1.44c.08-.52.35-1.04.77-1.45l7.24-7.24,1.91,1.91-7.24,7.24ZM17.26,12.02l-4.85-4.85,2.51-2.51,4.85,4.85-2.51,2.51ZM36.82,18.16l-3.27-3.69v-4.04c0-.55-.45-1-1-1h-8.12c-.55,0-1,.45-1,1l-.02,4.1-3.25,3.63c-.48.53-.74,1.22-.74,1.93v15.78c0,1.18.96,2.14,2.14,2.14h13.86c1.18,0,2.14-.96,2.14-2.14v-15.78c0-.71-.26-1.4-.74-1.93ZM21.64,19.49l3.25-3.63c.34-.38.53-.88.53-1.39v-3.04h6.12v3.04c0,.52.19,1.01.53,1.4l3.25,3.63c.15.17.23.38.23.6v4.86h-14.15v-4.86c0-.22.08-.43.23-.6ZM35.41,36.01h-13.86c-.08,0-.14-.06-.14-.14v-8.92h14.15v8.92c0,.08-.06.14-.14.14Z"></path>
+            </svg>
+          ),
+        };
+
+        // Product component
+        function Product({ item, index, key }) {
+          //if (!item.variantName || !item.productPictureURL) return null;
+          let img_src = item.productPictureURL;
+
+          // Again, for some reason FlowHub returns a string "null" instead of acual null value
+          if (!item.productPictureURL) {
+            // Backup img url delivered via cdn
+            img_src =
+              "https://d33jynxyjhnjq1.cloudfront.net/iframe-test/weed_test.jpeg";
+          }
+
+          return (
+            <div
+              onClick={() => setSelectedProduct(item)}
+              key={index}
+              className="product-card"
+            >
+              <div className="container">
+                <div
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  {/** top */}
+                  <div className="top-div">
+                    <p className="inter-bold first-p">
+                      {item?.category ? item?.category : ""}
+                    </p>
+                    <p className="second-p">
+                      {item?.speciesName ? item?.speciesName : ""}
+                    </p>
+                  </div>
+
+                  {/** middle */}
+                  <div
+                    style={{
+                      alignItems: "center",
+                      marginTop: 16,
+                      flexDirection: "column",
+                    }}
+                    className="default-flex-width"
+                  >
+                    <div style={{ position: "relative", marginBottom: 16 }}>
+                      <div
+                        style={{
+                          width: 100,
+                          height: 100,
+                          overflow: "hidden",
+                          borderRadius: 10,
+                        }}
+                      >
+                        <img
+                          style={{
+                            width: 100,
+                            height: 100,
+                            objectFit: "cover",
+                          }}
+                          src={img_src}
+                          alt={item?.productName}
+                        />
+                      </div>
+                      {item.quantity < 10 && (
+                        <div
+                          style={{
+                            position: "absolute",
+                            backgroundColor: "#DD403A",
+                            top: 80,
+                            width: 92,
+                            left: 30,
+                            color: "white",
+                            borderRadius: 30,
+                            fontWeight: 700,
+                            fontSize: 12,
+                            paddingTop: 4,
+                            paddingBottom: 4,
+                            justifyContent: "center",
+                            display: "flex",
+                          }}
+                        >
+                          Running Low
+                        </div>
+                      )}
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        width: "100%",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "start",
+                          width: "100%",
+                        }}
+                      >
+                        <p
+                          style={{
+                            fontSize: 16,
+                            textAlign: "start",
+                            fontWeight: 500,
+                            color: "#2E1679",
+                          }}
+                          className="text-start inter-bold "
+                        >
+                          {capitalizeWordsWithAcronyms(item?.productName)}
+                        </p>
+
+                        <p className="inter-normal text-[16px] font-regular text-gray-500">
+                          {item?.brand}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/** bottom */}
+                <div
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <div>
+                    {Array.isArray(item?.cannabinoidInformation) &&
+                      item?.cannabinoidInformation
+                        .filter((info) => info.name === "thc")
+                        ?.map((thcInfo, index) => (
+                          <div
+                            style={{
+                              color: "#6b7280",
+                              display: "flex",
+                              flexDirection: "row",
+                              alignItems: "center",
+                              gap: "4px",
+                              fontSize: "11px",
+                              marginTop: "4px",
+                            }}
+                            key={index}
+                          >
+                            <p style={{}}>{thcInfo.name.toUpperCase()}</p>
+                            <p>
+                              {thcInfo.lowerRange}
+                              {thcInfo.unitOfMeasure}
+                            </p>
+                          </div>
+                        ))}
+                  </div>
+                  <p className="inter-semibold">
+                    ${(item?.postTaxPriceInPennies / 100.0).toFixed(2)} /{" "}
+                    {item?.productWeight ? "" : item?.productWeigh}{" "}
+                    {item?.productUnitOfMeasure}
+                  </p>
+                </div>
+              </div>
+
+              <div className="button">Buy Now</div>
+            </div>
+          );
+        }
+
+        function getMostRecentProduct(index) {
+          // Filter out items without `productName` or `productPictureURL`
+          const filteredItems = weed_items?.data.filter(
+            (item) => item.productName && item.productPictureURL
+          );
+
+          // Sort the filtered items by `createdAt` in descending order
+          const sortedItems = filteredItems.sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+          );
+
+          // Return the item at the specified index, if it exists
+          return sortedItems[index] || null;
+        }
+
+        /**
+        const all_terpernes = [
+          "β-Myrcene",
+          "Linalool",
+          "α-Humulene",
+          "α-Pinene",
+          "Limonene",
+          "Terpinolene",
+          "Caryophyllene Oxide",
+          "Total Terpenoids",
+          "β-Caryophyllene",
+        ]*/
+
+        const categories = [
+          "Flower",
+          "Concentrates",
+          "Tpoicals",
+          "Edibles",
+          "Vapes",
+          "Beverage",
+          "Accessories",
+          "Pre-Roll",
+          "Tinctures",
+        ];
+
+        function handleSelectCategory(cat) {
+          if (selectedCategories === cat) {
+            setSelectedCategories(null);
+          } else {
+            setSelectedCategories(cat);
+          }
+        }
+
+        function handleSelectEffect(e) {
+          // Create a shallow copy of the selectedEffects array
+          const sel_eff_copy = [...selectedEffects];
+
+          if (sel_eff_copy.includes(e)) {
+            const index = sel_eff_copy.indexOf(e);
+            sel_eff_copy.splice(index, 1); // Remove the effect
+          } else {
+            sel_eff_copy.push(e);
+          }
+          setSelectedEffects(sel_eff_copy);
+        }
+
+        function handleSelectBrand(e) {
+          // Create a shallow copy of the selectedEffects array
+          const sel_eff_copy = [...selectedBrands];
+
+          if (sel_eff_copy.includes(e)) {
+            const index = sel_eff_copy.indexOf(e);
+            sel_eff_copy.splice(index, 1); // Remove the effect
+          } else {
+            sel_eff_copy.push(e);
+          }
+          setSelectedBrands(sel_eff_copy);
+        }
+
+        function handlePriceSelect(e) {
+          console.log(e);
+          console.log();
+          if (price_under === e.value) {
+            setPriceUnder(null);
+          } else {
+            setPriceUnder(e.value);
+          }
+        }
+
+        function handleSortSelect(e) {
+          if (selectedSortSetting === e.value) {
+            setSelectedSortSetting(null);
+          } else {
+            setSelectedSortSetting(e.value);
+          }
+        }
+
+        function handleSelectTerpenes(e) {
+          console.log(e);
+          // Create a shallow copy of the selectedEffects array
+          const sel_eff_copy = [...selectedTerpenes];
+
+          if (sel_eff_copy.includes(e)) {
+            const index = sel_eff_copy.indexOf(e);
+            sel_eff_copy.splice(index, 1); // Remove the effect
+          } else {
+            sel_eff_copy.push(e);
+          }
+          setSelectedTerpenes(sel_eff_copy);
+        }
+
+        const ITEMS_PER_PAGE = 30; // Limit to 30 items per page
+
+        const ProductGrid = ({ filteredItems }) => {
+          const [currentPage, setCurrentPage] = useState(1);
+
+          // Calculate the total number of pages
+          const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
+
+          // Get items for the current page
+          const currentItems = filteredItems.slice(
+            (currentPage - 1) * ITEMS_PER_PAGE,
+            currentPage * ITEMS_PER_PAGE
+          );
+
+          const handlePageChange = (page) => {
+            setCurrentPage(page);
+          };
+
+          return (
+            <div>
+              {/* Pagination Controls */}
+              <div className="flex justify-center mb-4">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 border rounded-md mx-1 disabled:opacity-50  w-24 text-sm font-medium hover:bg-gray-200"
+                >
+                  Previous
+                </button>
+                {[...Array(totalPages).keys()].map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => handlePageChange(page + 1)}
+                    className={`px-4 py-2 border rounded-md mx-1 hover:bg-gray-200 text-sm font-medium hidden md:flex md:visible`}
+                    style={{
+                      backgroundColor:
+                        currentPage === page + 1 ? "#e5e7eb" : "",
+                    }}
+                  >
+                    {page + 1}
+                  </button>
+                ))}
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 border rounded-md mx-1 disabled:opacity-50 w-24 text-sm font-medium hover:bg-gray-200"
+                >
+                  Next
+                </button>
+              </div>
+              {/* Product Grid */}
+              <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+                {currentItems.map((item, index) => (
+                  <div key={index}>
+                    <Product item={item} key={item.id} index={index} />
+                  </div>
+                ))}
+              </div>
+
+              {/* Pagination Controls */}
+              <div className="flex justify-center mt-4">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 border rounded-md mx-1 disabled:opacity-50 w-24 text-sm font-medium hover:bg-gray-200"
+                >
+                  Previous
+                </button>
+                {[...Array(totalPages).keys()].map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => handlePageChange(page + 1)}
+                    className={`px-4 py-2 border rounded-md mx-1 hover:bg-gray-200 text-sm font-medium hidden md:flex md:visible${
+                      currentPage === page + 1 ? "bg-gray-200" : ""
+                    }`}
+                  >
+                    {page + 1}
+                  </button>
+                ))}
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 border rounded-md mx-1 disabled:opacity-50 w-24 text-sm font-medium hover:bg-gray-200"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          );
+        };
+
+        const [selectedProduct, setSelectedProduct] = useState(null);
+        const last_clicked = useRef({ x: null, y: null });
+
+        function IndividualProduct({ selectedProduct }) {
+          if (!selectedProduct) return null;
+
+          const item = selectedProduct;
+
+          //if (!item.variantName || !item.productPictureURL) return null;
+          let img_src = item.productPictureURL;
+
+          // Again, for some reason FlowHub returns a string "null" instead of acual null value
+          if (!item.productPictureURL) {
+            // Backup img url delivered via cdn
+            img_src =
+              "https://d33jynxyjhnjq1.cloudfront.net/iframe-test/weed_test.jpeg";
+          }
+
+          return (
+            <div
+              style={{ height: 11000, top: 0 }}
+              className=" p-2 flex flex-col items-center absolute left-0 w-screen z-50"
+            >
+              <div
+                onClick={() => setSelectedProduct(null)}
+                style={{ backgroundColor: "#0000003d" }}
+                className="bg-black absolute top-0 left-0 min-h-screen flex flex-col items-center absolute h-full top-0 left-0 w-screen z-40"
+              />
+              <div
+                style={{ borderRadius: 10, top: last_clicked.current.y - 300 }}
+                className="bg-white indv-prod-holder w-full z-50 absolute "
+              >
+                <div className="absolute w-full p-4 top-0 left-0 z-50">
+                  <button
+                    style={{
+                      backgroundColor: "white",
+                      borderRadius: 100,
+                      padding: 8,
+                    }}
+                    className="md:hover:opacity-80"
+                    onClick={() => setSelectedProduct(null)}
+                  >
+                    <svg
+                      class="w-[24px] h-[24px] text-black"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke="currentColor"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18 17.94 6M18 18 6.06 6"
+                      />
+                    </svg>
+                  </button>
+                </div>
+                <div className="relative">
+                  <img
+                    src={img_src}
+                    alt={item.productName}
+                    className="responsive-image"
+                  />
+                  <div className="absolute top-4 right-4 bg-yellow-500 text-white rounded-full px-3 py-1 font-bold">
+                    {item.quantity < 5 ? "Low Stock" : "In Stock"}
+                  </div>
+                </div>
+                <div className="p-6">
+                  <h1 className="text-2xl font-semibold inter-semibold text-[#2E1679]">
+                    {item.productName}
+                  </h1>
+                  <p className="text-gray-600 mt-1 inter-regular">
+                    {item.brand}
+                  </p>
+                  <p className="inter-semibold ml-1">
+                    ${(item.postTaxPriceInPennies / 100.0).toFixed(2)} /{" "}
+                    {item.productWeight} {item.productUnitOfMeasure}
+                  </p>
+                  <p className="mt-2 text-gray-500 inter-regular">
+                    {item.productDescription || "No description available."}
+                  </p>
+                  {item.cannabinoidInformation && (
+                    <div className="mt-6">
+                      <h2 className="text-lg font-bold inter-bold">
+                        Cannabinoid Information
+                      </h2>
+                      <div className="mt-2 space-y-2 text-sm">
+                        {item.cannabinoidInformation &&
+                          item.cannabinoidInformation.map((info, index) => (
+                            <div
+                              key={index}
+                              className="flex justify-between bg-gray-100 p-3 rounded-lg"
+                            >
+                              <strong className="font-semibold inter-semibold ">
+                                {capitalizeWordsWithAcronyms(info.name)}
+                              </strong>
+                              <span className="inter-regular">
+                                {info.upperRange} {info.unitOfMeasure}
+                              </span>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+                  {item.terpenes && (
+                    <div className="mt-2 text-sm">
+                      <h2 className="text-lg font-bold inter-bold">
+                        Terpene Information
+                      </h2>
+                      <div className="mt-2 grid grid-cols-2 gap-1">
+                        {item.terpenes.map((terpeneObj, index) => {
+                          // Extract key and value from the terpene object
+                          const [terpeneName, terpeneValue] =
+                            Object.entries(terpeneObj)[0];
+
+                          return (
+                            <div
+                              key={index}
+                              className="flex justify-between bg-gray-100 p-3 rounded-lg"
+                            >
+                              <strong className="font-semibold inter-semibold">
+                                {capitalizeWordsWithAcronyms(terpeneName)}
+                              </strong>
+                              <span className="inter-regular">
+                                {terpeneValue}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="mt-6 inter-regular">
+                    <h2 className="text-lg font-bold inter-bold">
+                      Product Details
+                    </h2>
+                    <ul className="mt-2 list-disc list-inside">
+                      <li>
+                        <strong className="inter-bold">Category:</strong>{" "}
+                        {item.category}
+                      </li>
+                      <li>
+                        <strong className="inter-bold">Weight:</strong>{" "}
+                        {item.productWeight} {item.productUnitOfMeasure}
+                      </li>
+                      <li>
+                        <strong className="inter-bold">SKU:</strong> {item.sku}
+                      </li>
+                      <li>
+                        <strong className="inter-bold">Location:</strong>{" "}
+                        {item.locationName}
+                      </li>
+                    </ul>
+                  </div>
+                  <div className="h-8" />
+                  <a
+                    target="_blank"
+                    style={{ backgroundColor: "#9767CB", borderRadius: 30 }}
+                    href="https://www.google.com/maps/place/50+Lower+Main+St+W,+Johnson,+VT+05656/@44.6538986,-72.763163,39269m/data=!3m1!1e3!4m6!3m5!1s0x4cb5ec36db729c79:0x5a2c160505396f05!8m2!3d44.635817!4d-72.680054!16s%2Fg%2F11c5cvl5gy?entry=ttu&g_ep=EgoyMDI0MTExNy4wIKXMDSoASAFQAw%3D%3D"
+                    className="mt-4 px-6 py-2 text-white inter-semibold text-nowrap"
+                  >
+                    Get Directions
+                  </a>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        const [promo_products, set_promo_products] = useState([]);
+
+        useEffect(() => {
+          // Utility function to recursively replace all "null" strings with actual null
+          const replaceNullStrings = (obj) => {
+            if (Array.isArray(obj)) {
+              return obj.map((item) => replaceNullStrings(item)); // Recursively process arrays
+            } else if (obj !== null && typeof obj === "object") {
+              const updatedObj = {};
+              for (const [key, value] of Object.entries(obj)) {
+                updatedObj[key] =
+                  value === "null" ? null : replaceNullStrings(value); // Replace "null" with actual null
+              }
+              return updatedObj;
+            }
+            return obj; // Return the value if it's neither an object nor an array
+          };
+
+          // Listen for messages from the parent window
+          const handleMessage = (event) => {
+            const products_local = event.data; // Ensure the correct data structure is being read
+
+            // Replace "null" strings with actual null in the data
+            const updatedProducts = replaceNullStrings(products_local);
+
+            // Filter out products that don't have required fields with valid values
+            const filteredProducts = updatedProducts?.data?.filter((item) => {
+              // Check if all required fields are non-null and non-"null"
+              return (
+                item.category &&
+                item.category !== "null" &&
+                item.postTaxPriceInPennies &&
+                item.postTaxPriceInPennies !== "null" &&
+                item.terpenes &&
+                Array.isArray(item.terpenes) &&
+                item.terpenes.length > 0 &&
+                item.type &&
+                item.type !== "null" &&
+                item.brand &&
+                item.brand !== "null" &&
+                item.productPictureURL &&
+                item.productPictureURL !== "null" &&
+                item.productName &&
+                item.productName !== "null"
+              );
+            });
+
+            set_promo_products(filteredProducts);
+          };
+
+          window.addEventListener("message", handleMessage);
+
+          return () => {
+            window.removeEventListener("message", handleMessage);
+          };
+        }, []);
+
+        {
+          /** main html - 8888*/
+        }
+        return (
+          <div
+            id="main-container"
+            onClick={handleClick}
+            className="w-full flex flex-col items-center p-4 overflow-y-hidden"
+          >
+            <IndividualProduct selectedProduct={selectedProduct} />
+            <div className="w-full flex flex-col px-[5vw] mb-12 gap-8">
+              {/* Sidebar for filters */}
+              <div className="flex flex-col gap-4 bg-white w-full items-center z-40 top-0 py-4 border-gray-200 left-0">
+                <div className="flex flex-col md:flex-row md:flex-wrap justify-center items-center w-full gap-3">
+                  {/** temp effects menu
+
+                  <div className="category-holder">
+                    <div className="category-dropdown">
+                      <p className="">Effects</p>
+                      <svg
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke="currentColor"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="m19 9-7 7-7-7"
+                        />
+                      </svg>
+                    </div>
+
+                    <div className="dropdown-menu">
+                      <div
+                        onClick={() => setSelectedEffects([])}
+                        className="reset-holder"
+                      >
+                        <p>Reset</p>
+                      </div>
+                      {effects.map((e) => (
+                        <label
+                          onClick={(event) => {
+                            event.preventDefault(); // Prevent default label behavior
+                            handleSelectEffect(e);
+                          }}
+                          key={e}
+                          className="option-holder"
+                        >
+                          <input
+                            className="category-checkbox"
+                            type="checkbox"
+                            checked={selectedEffects.includes(e)} // Mark as checked if effect is selected
+                            readOnly
+                          />
+                          <p>{e}</p>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+ */}
+                  <div className="category-holder">
+                    <div className="category-dropdown">
+                      <p className="">Brands</p>
+                      <svg
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke="currentColor"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="m19 9-7 7-7-7"
+                        />
+                      </svg>
+                    </div>
+                    <div className="dropdown-menu">
+                      <div
+                        onClick={() => setSelectedBrands([])}
+                        className="reset-holder"
+                      >
+                        <p>Reset</p>
+                      </div>
+                      {brands.map((e) => (
+                        <label
+                          onClick={(event) => {
+                            event.preventDefault(); // Prevent default label behavior
+                            handleSelectBrand(e);
+                          }}
+                          key={e}
+                          className="option-holder"
+                        >
+                          <input
+                            className="category-checkbox"
+                            type="checkbox"
+                            checked={selectedBrands.includes(e)} // Mark as checked if effect is selected
+                            readOnly
+                          />
+                          <p>{e}</p>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="category-holder">
+                    <div className="category-dropdown">
+                      <p className="">Price</p>
+                      <svg
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke="currentColor"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="m19 9-7 7-7-7"
+                        />
+                      </svg>
+                    </div>
+                    <div className="dropdown-menu">
+                      <div
+                        onClick={() => setPriceUnder(null)}
+                        className="reset-holder"
+                      >
+                        <p>Reset</p>
+                      </div>
+                      {all_prices.map((e) => (
+                        <label
+                          onClick={(event) => {
+                            event.preventDefault(); // Prevent default label behavior
+                            handlePriceSelect(e);
+                          }}
+                          key={e.label}
+                          className="option-holder"
+                        >
+                          <input
+                            className="category-checkbox"
+                            type="checkbox"
+                            checked={price_under === e.value} // Mark as checked if effect is selected
+                            readOnly
+                          />
+                          <p>{e?.label}</p>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="category-holder">
+                    <div className="category-dropdown">
+                      <p className="">Terpenes</p>
+                      <svg
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke="currentColor"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="m19 9-7 7-7-7"
+                        />
+                      </svg>
+                    </div>
+                    <div className="dropdown-menu">
+                      <div
+                        onClick={() => setSelectedTerpenes([])}
+                        className="reset-holder"
+                      >
+                        <p>Reset</p>
+                      </div>
+                      {terpenes.map((e) => (
+                        <label
+                          onClick={(event) => {
+                            event.preventDefault(); // Prevent default label behavior
+                            handleSelectTerpenes(e);
+                          }}
+                          key={e}
+                          className="option-holder"
+                        >
+                          <input
+                            className="category-checkbox"
+                            type="checkbox"
+                            checked={selectedTerpenes.includes(e)} // Mark as checked if effect is selected
+                            readOnly
+                          />
+                          <p>{e}</p>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="category-holder">
+                    <div className="category-dropdown">
+                      <p className="">Sort By</p>
+                      <svg
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke="currentColor"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="m19 9-7 7-7-7"
+                        />
+                      </svg>
+                    </div>
+                    <div className="dropdown-menu">
+                      <div
+                        onClick={() => setSelectedSortSetting(null)}
+                        className="reset-holder"
+                      >
+                        <p>Reset</p>
+                      </div>
+                      {all_sort_settings.map((e) => (
+                        <label
+                          onClick={(event) => {
+                            event.preventDefault(); // Prevent default label behavior
+                            handleSortSelect(e);
+                          }}
+                          key={e.label}
+                          className="option-holder"
+                        >
+                          <input
+                            className="category-checkbox"
+                            type="checkbox"
+                            checked={selectedSortSetting === e.value} // Mark as checked if effect is selected
+                            readOnly
+                          />
+                          <p>{e.label}</p>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="w-full flex flex-row justify-start lg:justify-center items-center gap-4 overflow-x-scroll">
+                {categories?.map((cat, index) => (
+                  <button
+                    onClick={() => handleSelectCategory(cat)}
+                    className="category-button"
+                    key={index}
+                    style={{
+                      backgroundColor:
+                        selectedCategories === cat ? "#2e1679" : undefined,
+                    }}
+                  >
+                    {/* Pass the fill as a prop to the SVG */}
+                    {React.cloneElement(cat_icons[cat], {
+                      fill: selectedCategories === cat ? "#ffffff" : "#2e1679", // Default fill color
+                      width: 80,
+                      height: 120,
+                    })}
+                    <p
+                      style={{
+                        backgroundColor: "transparent",
+                        color: selectedCategories === cat ? "#ffffff" : "",
+                      }}
+                    >
+                      {cat}
+                    </p>
+                  </button>
+                ))}
+              </div>
+              {/* Display filtered products */}
+              <div className="flex flex-col w-full">
+                {!weed_items && (
+                  <div className="w-full min-h-48 flex flex-col items-center justify-center">
+                    <p>Loading...</p>
+                  </div>
+                )}
+
+                <ProductGrid filteredItems={filteredItems} />
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      ReactDOM.render(<App />, document.getElementById("root"));
+    </script>
+  </body>
+</html>
