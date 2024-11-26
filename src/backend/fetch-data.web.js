@@ -53,11 +53,3 @@ export const fetchAllProductData = webMethod(Permissions.Anyone, async () => {
       throw error;
     });
 });
-
-/**
- * curl --request GET \
- --url https://api.flowhub.co/v0/locations/3ca755c5-23b2-428d-b7e1-41b9cc9ce12c/inventory \
- --header 'Accept: application/json' \
- --header 'clientId: 310ef273-c68f-4caf-bbe5-c5aa3e3d0be1' \
- --header 'key: 2ef703a4-a97e-4b6e-b1e8-d20c3dd78795'
- */
