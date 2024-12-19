@@ -173,6 +173,13 @@
       height: 30px;
     }
 
+    .category-holder-2 {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      height: 30px;
+    }
+
     .category-holder .category-dropdown {
       width: 300px;
       border: 1px solid #2e1679; /* Border color */
@@ -184,6 +191,37 @@
       justify-content: space-between;
       height: 30px;
       background: white;
+    }
+
+    .category-holder-2 .category-dropdown-2 {
+      width: 300px;
+      border: 1px solid #2e1679; /* Border color */
+      padding: 0.25rem 0.5rem; /* Padding: px-2 py-1 */
+      border-radius: 10px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      height: 30px;
+      background: white;
+
+      p {
+        font-size: 15px;
+        font-family: "Inter", sans-serif;
+        font-weight: 600;
+        color: #2e1679;
+      }
+
+      input {
+        color: #2e1679;
+      }
+
+      svg {
+        width: 16px;
+        height: 16px;
+        color: #2e1679;
+        cursor: pointer;
+      }
     }
 
     .category-holder .category-dropdown p {
@@ -423,6 +461,12 @@
       font-weight: 700;
       font-style: normal;
     }
+
+    .multi-price-container {
+      border: 1px solid #e5e7eb; /* border-gray-200 */
+      border-radius: 10px;
+      padding: 4px;
+    }
   </style>
 
   <body class="">
@@ -607,8 +651,6 @@
           const x = e.nativeEvent.clientX - rect.left;
           const y = e.nativeEvent.clientY - rect.top;
 
-          console.log("Mouse Position Relative to Container:", { x, y });
-
           last_clicked.current = { x, y };
         }
 
@@ -620,6 +662,7 @@
             did_init_listener.current = true;
           }
         }, []);
+        const [name_filter, set_name_filter] = useState("");
 
         useEffect(() => {
           if (weed_items?.data) {
@@ -647,10 +690,15 @@
                             Object.keys(terpeneObj).includes(selectedTerpene)
                           )
                         )
-                      : true)
+                      : true) &&
+                    // Name filter
+                    (name_filter
+                      ? item.productName
+                          .toLowerCase()
+                          .includes(name_filter.toLowerCase())
+                      : true) // Only apply filter if name_filter is not empty
                   );
                 })
-
                 .sort((a, b) => {
                   try {
                     // Sorting logic based on selectedSortSetting
@@ -667,7 +715,7 @@
                         return (
                           b.postTaxPriceInPennies - a.postTaxPriceInPennies
                         );
-                      case 4: // THC [Low-High] (Note: For THC, we assume it's in the `cannabinoidInformation` array)
+                      case 4: // THC [Low-High]
                         const thcA =
                           a.cannabinoidInformation?.find(
                             (info) => info.name === "thc"
@@ -705,6 +753,7 @@
           selectedBrands,
           selectedSortSetting,
           selectedTerpenes,
+          name_filter, // Add name_filter to the dependency array
         ]);
 
         function capitalizeWordsWithAcronyms(str) {
@@ -831,7 +880,7 @@
           if (!item.productPictureURL) {
             // Backup img url delivered via cdn
             img_src =
-              "https://d33jynxyjhnjq1.cloudfront.net/iframe-test/weed_test.jpeg";
+            "https://d33jynxyjhnjq1.cloudfront.net/iframe-test/Untitled+design+%283%29.png";
           }
 
           return (
@@ -980,10 +1029,9 @@
                           </div>
                         ))}
                   </div>
-                  <p style={{fontSize:14}} className="inter-semibold">
+                  <p style={{ fontSize: 14 }} className="inter-semibold">
                     ${(item?.postTaxPriceInPennies / 100.0).toFixed(2)} /{" "}
-                    {item?.productWeight} {" "}
-                    {item?.productUnitOfMeasure}
+                    {item?.productWeight} {item?.productUnitOfMeasure}
                   </p>
                 </div>
               </div>
@@ -1207,8 +1255,10 @@
           if (!item.productPictureURL) {
             // Backup img url delivered via cdn
             img_src =
-              "https://d33jynxyjhnjq1.cloudfront.net/iframe-test/weed_test.jpeg";
+              "https://d33jynxyjhnjq1.cloudfront.net/iframe-test/Untitled+design+%283%29.png";
           }
+
+          let weightTierInformation = item.weightTierInformation;
 
           return (
             <div
@@ -1259,9 +1309,11 @@
                     alt={item.productName}
                     className="responsive-image"
                   />
+                  {/**}
                   <div className="absolute top-4 right-4 bg-yellow-500 text-white rounded-full px-3 py-1 font-bold">
                     {item.quantity < 5 ? "Low Stock" : "In Stock"}
                   </div>
+                */}
                 </div>
                 <div className="p-6">
                   <h1 className="text-2xl font-semibold inter-semibold text-[#2E1679]">
@@ -1270,10 +1322,29 @@
                   <p className="text-gray-600 mt-1 inter-regular">
                     {item.brand}
                   </p>
-                  <p className="inter-semibold ml-1">
-                    ${(item.postTaxPriceInPennies / 100.0).toFixed(2)} /{" "}
-                    {item.productWeight} {item.productUnitOfMeasure}
-                  </p>
+                  {!weightTierInformation && (
+                    <p className="inter-semibold ml-1">
+                      ${(item.postTaxPriceInPennies / 100.0).toFixed(2)} /{" "}
+                      {item.productWeight} {item.productUnitOfMeasure}
+                    </p>
+                  )}
+                  <div className="flex flex-wrap gap-3 mt-4">
+                    {weightTierInformation &&
+                      weightTierInformation.map((tier, index) => (
+                        <div key={index} className="flex flex-col multi-price-container">
+                          <h3 className="text-[14px] font-semibold text-gray-800 p-1 ">
+                            {tier.name}
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            Amount: {tier.gramAmount}g
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            Price: $
+                            {(tier.pricePerUnitInMinorUnits / 100).toFixed(2)}
+                          </p>
+                        </div>
+                      ))}
+                  </div>
                   <p className="mt-2 text-gray-500 inter-regular">
                     {item.productDescription || "No description available."}
                   </p>
@@ -1282,17 +1353,17 @@
                       <h2 className="text-lg font-bold inter-bold">
                         Cannabinoid Information
                       </h2>
-                      <div className="mt-2 space-y-2 text-sm">
+                      <div className="mt-2 flex flex-wrap gap-1">
                         {item.cannabinoidInformation &&
                           item.cannabinoidInformation.map((info, index) => (
                             <div
                               key={index}
-                              className="flex justify-between bg-gray-100 p-3 rounded-lg"
+                              className="flex flex-row gap-2 bg-gray-100 p-3 rounded-lg "
                             >
-                              <strong className="font-semibold inter-semibold ">
+                              <strong className="font-semibold inter-semibold text-[13px]">
                                 {capitalizeWordsWithAcronyms(info.name)}
                               </strong>
-                              <span className="inter-regular">
+                              <span className="inter-regular text-[13px]">
                                 {info.upperRange} {info.unitOfMeasure}
                               </span>
                             </div>
@@ -1305,7 +1376,7 @@
                       <h2 className="text-lg font-bold inter-bold">
                         Terpene Information
                       </h2>
-                      <div className="mt-2 grid grid-cols-2 gap-1">
+                      <div className="mt-2 flex flex-wrap gap-1">
                         {item.terpenes.map((terpeneObj, index) => {
                           // Extract key and value from the terpene object
                           const [terpeneName, terpeneValue] =
@@ -1314,7 +1385,7 @@
                           return (
                             <div
                               key={index}
-                              className="flex justify-between bg-gray-100 p-3 rounded-lg"
+                              className="flex flex-row gap-2 bg-gray-100 p-3 rounded-lg"
                             >
                               <strong className="font-semibold inter-semibold">
                                 {capitalizeWordsWithAcronyms(terpeneName)}
@@ -1679,9 +1750,44 @@
                       ))}
                     </div>
                   </div>
+
+                  <div className="category-holder-2">
+                    <div className="category-dropdown-2">
+                      <div className="w-full flex flex-row items-center gap-2 text-sm">
+                        <p className="">Search</p>
+                        <input
+                          className="p-1 outline-none text-[#2e1679] w-full"
+                          type="text"
+                          value={name_filter} // Bound to the name_filter state
+                          onChange={(e) => set_name_filter(e.target.value)} // Update name_filter state on change
+                        />
+                      </div>
+                      {name_filter && (
+                        <svg
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          onClick={() => set_name_filter("")} // Clears the filter when clicked
+                          className="cursor-pointer"
+                        >
+                          <path
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M6 18 17.94 6M18 18 6.06 6"
+                          />
+                        </svg>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div className="w-full flex flex-row justify-start lg:justify-center items-center gap-4 overflow-x-scroll">
+
+              <div className="w-full flex flex-row justify-start lg:justify-center items-center gap-4 overflow-x-auto">
                 {categories?.map((cat, index) => (
                   <button
                     onClick={() => handleSelectCategory(cat)}
@@ -1709,6 +1815,7 @@
                   </button>
                 ))}
               </div>
+
               {/* Display filtered products */}
               <div className="flex flex-col w-full">
                 {!weed_items && (
